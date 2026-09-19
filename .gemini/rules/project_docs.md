@@ -21,3 +21,8 @@
 
 4. **技術資料の隔離保持**:
    - `docs/` ディレクトリ直下およびサブディレクトリには純粋な技術資料（Markdown形式やSQLスキーマ等）のみを保存し、アプリコードや一時ファイル・ビルド成果物を配置しないこと。
+
+5. **外部サービス連携の維持（Vercel / Supabase / 外部API）**:
+   - **Vercel**: 本番デプロイ破壊防止のための事前ビルド検証、および `vercel.json` SPAリライト設定の整合維持。
+   - **Supabase**: DB構造変更時の `docs/specs/03_database_schema.sql` 更新、および管理画面で実行可能なSQLの提示。未接続時のLocalStorageフォールバック維持。
+   - **外部API**: 新規APIキーが必要な際の `.env.example` 同期と設定手順の案内。
