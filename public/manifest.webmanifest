@@ -1,0 +1,16 @@
+{
+  "name": "ロケットアナライザー",
+  "short_name": "RocketAnalyzer",
+  "description": "RocketNow配達パートナー向け稼ぎ分析・日報アプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f43f5e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
