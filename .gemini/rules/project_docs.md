@@ -3,7 +3,8 @@
 本プロジェクト（ロケットアナライザー）において、AIエージェントは以下を順守してください。
 
 1. **技術資料の参照 & Single Source of Truth**:
-   - `docs/README.md`, `01_requirements_definition.md`, `docs/specs/`, `docs/guides/` を正として同期。
+   - `docs/README.md`, `docs/01_requirements_definition.md`, `docs/specs/`, `docs/guides/` を正として同期。
+   - タスク完了時の更新は `docs/guides/02_implementation_status.md` のみに限定し、`docs/specs/` は設計変更時のみ同期する（コンテキスト浪費防止）。
    - 単発質問や軽微な修正時は全走査をスキップし省エネを徹底。
 
 2. **iPhone PWA / モバイル操作性基準（配達現場向け絶対要件）**:
