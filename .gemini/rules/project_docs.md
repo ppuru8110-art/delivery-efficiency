@@ -26,3 +26,4 @@
    - **Vercel**: 本番デプロイ破壊防止のための事前ビルド検証、および `vercel.json` SPAリライト設定の整合維持。
    - **Supabase**: DB構造変更時の `docs/specs/03_database_schema.sql` 更新、および管理画面で実行可能なSQLの提示。未接続時のLocalStorageフォールバック維持。
    - **外部API**: 新規APIキーが必要な際の `.env.example` 同期と設定手順の案内。
+   - **コスト意識**: Google Maps APIやSupabaseの完全無料（0円）枠を超過しない安全設計（キャッシュ活用・不要リクエスト抑制）の徹底。
