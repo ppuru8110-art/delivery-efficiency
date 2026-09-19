@@ -49,7 +49,8 @@ src/
 ├── components/         # 共通UIコンポーネント
 │   ├── Navigation.jsx  # ボトムナビゲーションバー (iPhone固定)
 │   ├── MetricCard.jsx  # 時給・単価等の数値表示カード
-│   └── Header.jsx      # アプリヘッダー
+│   ├── Header.jsx      # アプリヘッダー
+│   └── ErrorBoundary.jsx # 🛡️ 例外遮断・ホワイトアウト防止フォールバックUI
 ├── pages/              # 各画面コンポーネント
 │   ├── Dashboard.jsx   # 📊 稼ぎアナライザー・グラフ・確定申告試算
 │   ├── LogEntry.jsx    # 📝 片手日報入力フォーム
@@ -58,6 +59,17 @@ src/
 │   └── LocationNotes.jsx# 📌 (将来拡張) 案2 店舗/マンションメモ
 ├── lib/
 │   ├── supabaseClient.js # Supabase接続クライアント
-│   └── storage.js      # オフライン用LocalStorage制御
+│   └── storage.js      # 端末UUID管理 ＆ オフラインLocalStorage制御
 └── App.jsx             # メインルーティング & モバイル枠組み
 ```
+
+---
+
+## 4. 堅牢性・例外遮断 ＆ プライバシー設計
+
+1. **即死防止（ErrorBoundary ＆ PWA耐性）**:
+   - レンダリング時や非同期処理の予期せぬエラー、デプロイ後の古いキャッシュ起因のチャンクエラー（ChunkLoadError）を `ErrorBoundary` で遮断。
+   - 画面全体が真っ白になる障害を防ぎ、ワンタップで「再読み込み」または「キャッシュ再同期」が可能なフォールバック画面を表示。
+2. **端末UUID（`device_id`）によるプライバシー境界（RLS）**:
+   - 端末ごとに初回起動時にUUIDを自動採番して LocalStorage に保持。
+   - すべての日報データに `device_id` を付与して保存し、Supabase連携時も他人のデータと混ざらないRLS論理分離を実現。
