@@ -40,8 +40,9 @@
 - [x] GitHubリポジトリ連携・オーナー認証正常化 (`main` ブランチ)
 - [x] Vercelによる自動CI/CD本番デプロイ成功 (`Ready Latest`)
 
-### 5. プロジェクト規約 ＆ 安全プロトコル（済）
+### 5. プロジェクト規約 ＆ 設計仕様（済）
 - [x] グローバル運用規約（GEMINI.md）との整合性確立 ＆ プロジェクト固有ルール（`.gemini/rules/project_docs.md`）の現場特化刷新（iPhone PWA基準・オフライン同期・0円運用・ドキュメント同期最適化）
+- [x] 詳細設計書（`docs/specs/`）の同期完了（16px自動ズーム防止、ErrorBoundary即死防止、device_id RLSデータ分離、堅牢性テストケース）
 
 ---
 
