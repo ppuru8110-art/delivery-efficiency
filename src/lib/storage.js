@@ -1,6 +1,21 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 const LOCAL_STORAGE_KEY = 'rocket_analyzer_delivery_logs';
+const DEVICE_ID_KEY = 'rocket_analyzer_device_id';
+
+/** 端末固有識別子（UUID）の取得・自動生成 (PWA未認証時のデータ分離用) */
+export const getDeviceId = () => {
+  let id = localStorage.getItem(DEVICE_ID_KEY);
+  if (!id) {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      id = crypto.randomUUID();
+    } else {
+      id = 'dev-' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+    }
+    localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+  return id;
+};
 
 /** 初期用の2週間分デモデータ生成 */
 export const SAMPLE_DEMO_LOGS = [
@@ -81,17 +96,23 @@ export const SAMPLE_DEMO_LOGS = [
   }
 ];
 
-/** 日報ログの一覧取得 */
+/** 日報ログの一覧取得 (端末データ分離) */
 export const fetchDeliveryLogs = async () => {
+  const deviceId = getDeviceId();
+
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
         .from('delivery_logs')
         .select('*')
+        .eq('device_id', deviceId)
         .order('work_date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      if (data && data.length > 0) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+        return data;
+      }
     } catch (err) {
       console.warn('Supabase fetch failed, falling back to LocalStorage:', err);
     }
@@ -100,9 +121,9 @@ export const fetchDeliveryLogs = async () => {
   // LocalStorage フォールバック
   const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (!localData) {
-    // データ未登録時はデフォルトでデモデータを初期ロード
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(SAMPLE_DEMO_LOGS));
-    return SAMPLE_DEMO_LOGS;
+    const initialWithDevice = SAMPLE_DEMO_LOGS.map(log => ({ ...log, device_id: deviceId }));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initialWithDevice));
+    return initialWithDevice;
   }
 
   try {
@@ -112,14 +133,22 @@ export const fetchDeliveryLogs = async () => {
   }
 };
 
-/** 日報の新規保存 */
+/** 日報の新規保存 (オフライン先行保存 + Supabase自動同期) */
 export const saveDeliveryLog = async (logData) => {
+  const deviceId = getDeviceId();
   const newLog = {
     ...logData,
     id: logData.id || `log-${Date.now()}`,
+    device_id: deviceId,
     created_at: new Date().toISOString()
   };
 
+  // オフラインファースト: まず即時LocalStorageに保存（配達現場の電波途絶対策）
+  const current = await fetchDeliveryLogs();
+  const updated = [newLog, ...current.filter(item => item.id !== newLog.id)];
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+
+  // オンラインであればSupabaseへ同期
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
@@ -130,60 +159,64 @@ export const saveDeliveryLog = async (logData) => {
       if (error) throw error;
       return data?.[0] || newLog;
     } catch (err) {
-      console.warn('Supabase save failed, saving to LocalStorage:', err);
+      console.warn('Supabase save failed, preserved in LocalStorage:', err);
     }
   }
 
-  // LocalStorage フォールバック
-  const current = await fetchDeliveryLogs();
-  const updated = [newLog, ...current];
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
   return newLog;
 };
 
-/** 日報の更新 */
+/** 日報の更新 (端末データ限定) */
 export const updateDeliveryLog = async (id, updatedFields) => {
+  const deviceId = getDeviceId();
+
+  // LocalStorage 先行更新
+  const current = await fetchDeliveryLogs();
+  const updated = current.map(item => item.id === id ? { ...item, ...updatedFields } : item);
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
         .from('delivery_logs')
         .update(updatedFields)
         .eq('id', id)
+        .eq('device_id', deviceId)
         .select();
 
       if (error) throw error;
       return data?.[0];
     } catch (err) {
-      console.warn('Supabase update failed, updating LocalStorage:', err);
+      console.warn('Supabase update failed, preserved in LocalStorage:', err);
     }
   }
 
-  // LocalStorage
-  const current = await fetchDeliveryLogs();
-  const updated = current.map(item => item.id === id ? { ...item, ...updatedFields } : item);
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
   return true;
 };
 
-/** 日報の削除 */
+/** 日報の削除 (端末データ限定) */
 export const deleteDeliveryLog = async (id) => {
+  const deviceId = getDeviceId();
+
+  // LocalStorage 先行削除
+  const current = await fetchDeliveryLogs();
+  const updated = current.filter(item => item.id !== id);
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+
   if (isSupabaseConfigured) {
     try {
       const { error } = await supabase
         .from('delivery_logs')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('device_id', deviceId);
 
       if (error) throw error;
     } catch (err) {
-      console.warn('Supabase delete failed, deleting from LocalStorage:', err);
+      console.warn('Supabase delete failed, preserved in LocalStorage:', err);
     }
   }
 
-  // LocalStorage
-  const current = await fetchDeliveryLogs();
-  const updated = current.filter(item => item.id !== id);
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
   return true;
 };
 

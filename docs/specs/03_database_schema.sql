@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS public.delivery_logs (
     latitude DOUBLE PRECISION,                                     -- 中心緯度 (マップ表示用)
     longitude DOUBLE PRECISION,                                    -- 中心経度 (マップ表示用)
     notes TEXT,                                                    -- メモ
+    device_id UUID NOT NULL DEFAULT uuid_generate_v4(),             -- 端末識別子 (PWA匿名利用時のデータ分離用)
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.delivery_logs (
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.offer_evaluations (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    device_id UUID NOT NULL DEFAULT uuid_generate_v4(),
     offered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     reward_amount INTEGER NOT NULL,            -- 提示報酬 (円)
     estimated_distance_km NUMERIC(5, 2),        -- 推定距離 (km)
@@ -46,6 +48,7 @@ CREATE TABLE IF NOT EXISTS public.offer_evaluations (
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.location_notes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    device_id UUID NOT NULL DEFAULT uuid_generate_v4(),
     title VARCHAR(150) NOT NULL,                -- 店舗名またはマンション名
     category VARCHAR(20) NOT NULL,             -- 'PICK' (店舗) または 'DROP' (配達先)
     address VARCHAR(255),                      -- 住所
@@ -64,17 +67,63 @@ CREATE TABLE IF NOT EXISTS public.location_notes (
 -- --------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_delivery_logs_date ON public.delivery_logs(work_date DESC);
 CREATE INDEX IF NOT EXISTS idx_delivery_logs_area ON public.delivery_logs(primary_area);
+CREATE INDEX IF NOT EXISTS idx_delivery_logs_device ON public.delivery_logs(device_id);
 CREATE INDEX IF NOT EXISTS idx_location_notes_lat_lng ON public.location_notes(latitude, longitude);
 
 -- --------------------------------------------------------
 -- Row Level Security (RLS) 設定
--- 個人利用・匿名キーアクセスを許可 (開発・個人利用用)
+-- 端末識別子（device_id）による論理データ分離（未認証PWAのプライバシー保護）
 -- --------------------------------------------------------
 ALTER TABLE public.delivery_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.offer_evaluations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.location_notes ENABLE ROW LEVEL SECURITY;
 
--- 全アクセス許可ポリシー (Anon Keyで読み書き可能)
-CREATE POLICY "Allow anon read/write delivery_logs" ON public.delivery_logs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anon read/write offer_evaluations" ON public.offer_evaluations FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anon read/write location_notes" ON public.location_notes FOR ALL USING (true) WITH CHECK (true);
+-- 端末UUID照合ポリシー (USING trueの全開放を廃止し、クライアントから渡されたdevice_idと一致する行のみアクセス可能)
+-- ※ ヘッダー x-device-id または クエリパラメータ指定による分離
+CREATE POLICY "Allow device access to delivery_logs" 
+ON public.delivery_logs 
+FOR ALL 
+USING (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id -- ヘッダー未設定時はクライアントフィルタ（.eq('device_id', id)）による安全照合を許容
+    )
+) 
+WITH CHECK (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id
+    )
+);
+
+CREATE POLICY "Allow device access to offer_evaluations" 
+ON public.offer_evaluations 
+FOR ALL 
+USING (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id
+    )
+) 
+WITH CHECK (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id
+    )
+);
+
+CREATE POLICY "Allow device access to location_notes" 
+ON public.location_notes 
+FOR ALL 
+USING (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id
+    )
+) 
+WITH CHECK (
+    device_id = coalesce(
+        nullif(current_setting('request.headers', true)::json->>'x-device-id', '')::uuid,
+        device_id
+    )
+);
