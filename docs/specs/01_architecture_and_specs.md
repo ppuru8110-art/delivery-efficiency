@@ -45,22 +45,26 @@ flowchart TD
 
 ```text
 src/
-├── assets/             # アイコン・画像
-├── components/         # 共通UIコンポーネント
-│   ├── Navigation.jsx  # ボトムナビゲーションバー (iPhone固定)
-│   ├── MetricCard.jsx  # 時給・単価等の数値表示カード
-│   ├── Header.jsx      # アプリヘッダー
-│   └── ErrorBoundary.jsx # 🛡️ 例外遮断・ホワイトアウト防止フォールバックUI
-├── pages/              # 各画面コンポーネント
-│   ├── Dashboard.jsx   # 📊 稼ぎアナライザー・グラフ・確定申告試算
-│   ├── LogEntry.jsx    # 📝 片手日報入力フォーム
-│   ├── AreaMap.jsx     # 🗺️ Google Maps エリアマップ
-│   ├── OfferCalc.jsx   # ⚡ (将来拡張) 案1 オファー即時判定
-│   └── LocationNotes.jsx# 📌 (将来拡張) 案2 店舗/マンションメモ
+├── assets/               # アイコン・画像
+├── components/           # 共通UIコンポーネント
+│   ├── Navigation.jsx    # ボトムナビゲーションバー (iPhone固定)
+│   ├── MetricCard.jsx    # 時給・単価等の数値表示カード
+│   ├── Header.jsx        # アプリヘッダー
+│   ├── EditLogModal.jsx  # ✏️ 日報編集・削除モーダル
+│   └── ErrorBoundary.jsx # 🛡️ [フェーズ1実装予定] 例外遮断・ホワイトアウト防止フォールバックUI
+├── pages/                # 各画面コンポーネント
+│   ├── Dashboard.jsx     # 📊 稼ぎアナライザー・グラフ・確定申告試算
+│   ├── LogEntry.jsx      # 📝 片手日報入力フォーム
+│   ├── AreaMap.jsx       # 🗺️ Google Maps エリアマップ
+│   ├── OfferCalc.jsx     # ⚡ [フェーズ2拡張予定] 案1 オファー即時判定
+│   └── LocationNotes.jsx # 📌 [フェーズ3拡張予定] 案2 店舗/マンション攻略メモ
 ├── lib/
 │   ├── supabaseClient.js # Supabase接続クライアント
-│   └── storage.js      # 端末UUID管理 ＆ オフラインLocalStorage制御
-└── App.jsx             # メインルーティング & モバイル枠組み
+│   ├── storage.js        # 端末UUID管理 ＆ オフラインLocalStorage制御
+│   ├── exportUtils.js    # 確定申告用 CSV/JSON エクスポート処理
+│   └── weatherApi.js     # Open-Meteo API 天候自動取得
+├── main.jsx              # アプリエントリーポイント
+└── App.jsx               # メインルーティング & モバイル枠組み
 ```
 
 ---
@@ -101,7 +105,42 @@ src/
 | `created_at` | `string` (ISO 8601 UTC) | ○ | レコード作成日時（`toISOString()`） |
 | `updated_at` | `string` (ISO 8601 UTC) | ○ | レコード更新日時（`Last-Write-Wins` 判定用） |
 
-### 2. LocalStorage 名前空間一覧
+### 2. オファー判定データモデル (`OfferEvaluation`) [フェーズ2拡張用]
+ロケットナウ等の案件受諾判断シミュレーター用データ構造。
+
+| フィールド名 | 型 | 必須 | 説明・制約 |
+| :--- | :--- | :---: | :--- |
+| `id` | `string` (UUID) | ○ | レコード固有UUID（`crypto.randomUUID()` 採番、主キー） |
+| `device_id` | `string` (UUID) | ○ | 端末固有識別子（RLS分離用） |
+| `offered_at` | `string` (ISO 8601 UTC) | ○ | オファー受信日時 |
+| `reward_amount` | `number` (整数) | ○ | 提示報酬（円） |
+| `estimated_distance_km` | `number` (小数第1位) | - | 推定距離（km） |
+| `estimated_duration_min`| `number` (整数) | - | 推定所要時間（分） |
+| `calc_hourly_rate` | `number` (整数) | ○ | 換算時給（円/h） |
+| `calc_km_rate` | `number` (整数) | ○ | 換算km単価（円/km） |
+| `is_accepted` | `boolean` | ○ | 受諾したか（デフォルト `false`） |
+| `created_at` | `string` (ISO 8601 UTC) | ○ | 判定ログ作成日時 |
+
+### 3. 店舗・ドロップ攻略メモデータモデル (`LocationNote`) [フェーズ3拡張用]
+店舗別ピック待ち時間およびマンション等のドロップ注意事項用データ構造。
+
+| フィールド名 | 型 | 必須 | 説明・制約 |
+| :--- | :--- | :---: | :--- |
+| `id` | `string` (UUID) | ○ | レコード固有UUID（`crypto.randomUUID()` 採番、主キー） |
+| `device_id` | `string` (UUID) | ○ | 端末固有識別子（RLS分離用） |
+| `title` | `string` | ○ | 店舗名または建物名（最大150文字） |
+| `category` | `string` | ○ | `'PICK'` (店舗) または `'DROP'` (配達先) |
+| `address` | `string` | - | 住所 |
+| `latitude` | `number` | ○ | 緯度（マーカー表示用） |
+| `longitude` | `number` | ○ | 経度（マーカー表示用） |
+| `wait_time_min` | `number` (整数) | - | 平均待ち時間（分） |
+| `parking_info` | `string` | - | 駐輪場・停車位置メモ |
+| `elevator_info`| `string` | - | エレベーター・防災センターメモ |
+| `rating` | `number` (1〜5) | - | おすすめ度評価 |
+| `notes` | `string` | - | 攻略自由メモ（最大500文字） |
+| `created_at` | `string` (ISO 8601 UTC) | ○ | メモ作成日時 |
+
+### 4. LocalStorage 名前空間一覧
 キー名の競合やデータ混入を防ぐため、プレフィックス `rocket_analyzer_` で統一管理。
 
 - `rocket_analyzer_device_id`: 端末固有UUID（初回起動時に自動生成）

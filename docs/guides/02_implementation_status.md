@@ -46,6 +46,7 @@
 - [x] 詳細設計書3点セット（01_architecture_and_specs.md, 02_ui_screen_design.md, 04_test_plan_and_cases.md）の完全整合性同期完了（標準データモデル・ストレージ名前空間・現場UI6大要素・現場死角テストケース網羅）
 - [x] docs/ 配下全ドキュメントのグローバル・固有ルール適合性チェックおよび記述競合完全排除（Single Source of Truth スキーマ完全統一、SQL platformカラム追加・重複整理、参照パス修正、Mermaid flowchart LR 最適化、FAQ RLSポリシー名是正、テストケース拡充）完了
 - [x] グローバル運用規約（GEMINI.md）改定 ＆ プロジェクト競合防止プロトコル確立（Single Source of Truth 多重定義禁止、仕様変更3大トリガーの定義、ペア同期Atomic Commit原則、管轄マップ明示、セッション終了時不可分連動）完了
+- [x] 技術資料の正本完全化（実在ファイル追認、将来データモデル仕様事前定義、共通関数シグネチャ追加による仕様変更4大トリガー確立、.env.example実ファイル配置）完了
 
 ---
 
