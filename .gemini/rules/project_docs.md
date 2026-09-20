@@ -2,9 +2,15 @@
 
 本プロジェクトにおいて、AIエージェントはグローバル運用規約に加え、以下の現場固有要件を厳守してください。
 
-1. **技術資料の具象マッピング（Single Source of Truth）**:
-   - 参照優先度: `docs/README.md`（全体概要）→ `docs/01_requirements_definition.md`（要件）→ `docs/specs/`（設計）→ `docs/guides/`（運用）。
-   - グローバル第8条の「進捗表」対象ファイルは `docs/guides/02_implementation_status.md` とし、タスク完了時の更新はこれに限定する（`docs/specs/` の同期は仕様変更時のみ）。
+1. **技術資料の具象マッピング（Single Source of Truth）＆ 競合防止プロトコル**:
+   - 参照優先度: `docs/README.md`（全体概要・管轄マップ）→ `docs/01_requirements_definition.md`（要件）→ `docs/specs/`（設計）→ `docs/guides/`（運用）。
+   - グローバル第8条の「進捗表」対象ファイルは `docs/guides/02_implementation_status.md` とし、日常タスク完了時の更新はこれに限定する。
+   - **仕様変更（設計書同期必須）トリガー ＆ ペア同期（Atomic Commit）**:
+     以下の変更がコード上で発生した場合は「仕様変更」とみなし、進捗表に加えて該当設計書を**コードと同一コミットで必ずペア同期**すること（ドキュメント陳腐化・ドリフトの完全封殺）：
+     ① **DB・LocalStorageの項目/型/キー変更**: `docs/specs/01_architecture_and_specs.md`（モデル表）および `03_database_schema.sql` を同時更新。
+     ② **コンポーネント新設・配置変更**: `01_architecture_and_specs.md`（ツリー）および `02_ui_screen_design.md` を同時更新。
+     ③ **UI操作フロー・ボタン文言・バリデーション変更**: `02_ui_screen_design.md` および `04_test_plan_and_cases.md` を同時更新。
+   - **セッションクローズ時の不可分連動**: 終了・切替指示時は、進捗表（`02_implementation_status.md`）と引き継ぎ書（`05_handoff_prompt.md`）を必ずセットで最新コミットハッシュ・状態に同期する。
 
 2. **iPhone PWA / モバイル操作性基準（配達現場向け絶対要件）**:
    - **フォーム自動ズーム・キーボード追従**: すべての入力欄はフォントサイズ最小 16px（Tailwind: `text-base`）以上を必須化（iOSズーム封殺）。仮想キーボード起動時の決定ボタン・入力欄隠蔽を防ぐスクロール余白と追従レイアウトを確保する。

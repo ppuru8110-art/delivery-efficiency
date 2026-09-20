@@ -38,6 +38,18 @@
 
 ---
 
+### 🎯 各ドキュメントの管轄領域（Single Source of Truth）
+重複定義による記述競合を防ぐため、各情報の正本（Truth）を以下のように定めます：
+- **データモデル・LocalStorage名前空間**: `docs/specs/01_architecture_and_specs.md`
+- **PostgreSQL DDL・RLSポリシー**: `docs/specs/03_database_schema.sql`
+- **画面レイアウト・操作性・コントラスト基準**: `docs/specs/02_ui_screen_design.md`
+- **受入テスト手順・検証期待値**: `docs/specs/04_test_plan_and_cases.md`
+- **外部キー設定・セキュリティ制限（リファラー）**: `docs/guides/01_services_setup_guide.md`
+- **タスク進捗・完了チェックリスト**: `docs/guides/02_implementation_status.md`
+- **次回開発スタートアップ指示**: `docs/guides/05_handoff_prompt.md`
+
+---
+
 ## 🛠️ 技術スタック
 - **画面 (PWA)**: React + Vite + Tailwind CSS + Lucide Icons + Recharts
 - **DB/バックエンド**: Supabase (PostgreSQL)
