@@ -86,13 +86,16 @@ src/
 | `id` | `string` (UUID) | ○ | レコード固有UUID（`crypto.randomUUID()` 採番、主キー） |
 | `device_id` | `string` (UUID) | ○ | 端末固有識別子（RLSデータ分離用） |
 | `work_date` | `string` (YYYY-MM-DD) | ○ | **業務日付（稼働開始日基準）**。日またぎ集計の基準日。 |
-| `start_time` | `string` (HH:mm) | ○ | 稼働開始時刻（例: "18:00"） |
-| `end_time` | `string` (HH:mm) | ○ | 稼働終了時刻（例: "02:00"） |
-| `sales` | `number` (整数) | ○ | 売上金額（円、`Math.round` 整数丸め） |
-| `deliveries` | `number` (整数) | ○ | 配達完了件数（件） |
-| `distance` | `number` (小数第1位) | ○ | 走行距離（km、例: 42.5） |
+| `start_time` | `string` (HH:mm) | - | 稼働開始時刻（例: "18:00"） |
+| `end_time` | `string` (HH:mm) | - | 稼働終了時刻（例: "02:00"） |
+| `hours_worked` | `number` (小数第2位) | ○ | 実稼働時間（h、実時刻差分から算出、0超過） |
+| `total_earnings` | `number` (整数) | ○ | 売上金額（円、`Math.round` 整数丸め） |
+| `delivery_count` | `number` (整数) | ○ | 配達完了件数（件、0以上） |
+| `distance_km` | `number` (小数第1位) | ○ | 走行距離（km、例: 42.5） |
 | `weather` | `string` | ○ | 天候（`sunny` / `cloudy` / `rain` / `heavy_rain`） |
-| `area` | `string` | - | 主要稼働エリア（例: "渋谷・恵比寿"、最大50文字） |
+| `primary_area` | `string` | - | 主要稼働エリア（例: "渋谷・恵比寿"、最大50文字） |
+| `latitude` | `number` | - | 中心緯度（Google Mapsピン表示用） |
+| `longitude` | `number` | - | 中心経度（Google Mapsピン表示用） |
 | `platform` | `string` | - | 配送元（`uber` / `demae` / `menu` / `wolt` / `other`） |
 | `notes` | `string` | - | 自由メモ（最大500文字、`maxLength` 制限） |
 | `created_at` | `string` (ISO 8601 UTC) | ○ | レコード作成日時（`toISOString()`） |

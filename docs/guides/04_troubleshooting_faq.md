@@ -10,7 +10,7 @@
 * **原因**: `.env` の URL や API Key が間違っている、または RLS (Row Level Security) のポリシーが未設定。
 * **対処手順**:
   1. `.env` ファイルに `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY` が正しいか確認。
-  2. Supabase の SQL Editor を開き、`docs/specs/03_database_schema.sql` を再実行して RLS ポリシー (`Allow anon read/write`) を設定。
+  2. Supabase の SQL Editor を開き、`docs/specs/03_database_schema.sql` を再実行して RLS ポリシー (`Device isolation delivery_logs`) を設定。
   3. 万が一接続できない場合、本アプリは自動的に **LocalStorage** に保存されるためデータは失われません。
 
 ---

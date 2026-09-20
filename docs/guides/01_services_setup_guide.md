@@ -17,7 +17,7 @@
 - **手順**:
   1. [Supabase公式](https://supabase.com/) にアクセスし、「Start your project」（GitHub連携でログイン可能）をクリック。
   2. 新しいプロジェクトを作成（例: `rocket-analyzer`）。
-  3. 左メニューの **「SQL Editor」** を開き、`docs/specs/02_database_schema.sql` の内容を丸ごと貼り付けて **「Run」** を実行。
+  3. 左メニューの **「SQL Editor」** を開き、`docs/specs/03_database_schema.sql` の内容を丸ごと貼り付けて **「Run」** を実行。
   4. 左メニューの **「Project Settings」 > 「API」** から以下をコピーして手元にメモしておく。
      - **Project URL** (`https://xxxx.supabase.co`)
      - **anon / public Key** (`eyJhbGci...`)
@@ -31,6 +31,12 @@
   2. 新しいプロジェクトを作成し、**「Maps JavaScript API」** を有効化。
   3. 「認証情報」から **APIキー（API Key）** を作成し、コピーしてメモ。
      *(※毎月$200分＝約3万円分の無料枠があるため、個人利用範囲では実質0円です)*
+  4. **APIキーのセキュリティ制限（必須・課金事故封殺）**:
+     - 「アプリケーションの制限」で **「ウェブサイト」** を選択。
+     - 以下のウェブサイトの制限を追加して不正利用・課金を完全防止：
+       - `http://localhost:*` （ローカル開発用）
+       - `https://*.vercel.app/*` （Vercel本番・プレビュー用）
+     - 「APIの制限」で **「Maps JavaScript API」** のみに制限。
 
 ---
 

@@ -8,8 +8,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- --------------------------------------------------------
 -- テーブル1: delivery_logs (フェーズ1: 日報データ)
 -- --------------------------------------------------------
--- テーブル1: delivery_logs (フェーズ1: 日報データ)
--- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.delivery_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     device_id UUID NOT NULL,                                       -- 端末固有UUID (RLSデータ分離キー)
@@ -22,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.delivery_logs (
     distance_km NUMERIC(6, 2) DEFAULT 0,                           -- 走行距離 (km)
     weather VARCHAR(20) DEFAULT '晴れ',                             -- 晴れ/曇り/雨/大雨
     primary_area VARCHAR(100),                                     -- 主要稼働エリア
+    platform VARCHAR(20) DEFAULT 'other',                          -- 配送元 (uber/demae/menu/wolt/other)
     latitude DOUBLE PRECISION,                                     -- 中心緯度 (マップ表示用)
     longitude DOUBLE PRECISION,                                    -- 中心経度 (マップ表示用)
     notes TEXT,                                                    -- メモ

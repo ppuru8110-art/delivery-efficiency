@@ -18,7 +18,7 @@
 - 📱 [specs/02_ui_screen_design.md](file:///c:/Users/81902/Desktop/%E3%82%A2%E3%83%97%E3%83%AA%E9%96%8B%E7%99%BA/delivery-efficiency/docs/specs/02_ui_screen_design.md)
   - iPhone（390×844px）向けPWA画面構成、ボトムナビゲーション、各画面レイアウト詳細。
 - 🗄️ [specs/03_database_schema.sql](file:///c:/Users/81902/Desktop/%E3%82%A2%E3%83%97%E3%83%AA%E9%96%8B%E7%99%BA/delivery-efficiency/docs/specs/03_database_schema.sql)
-  - Supabaseで実行可能なSQLスクリプト。`delivery_logs` (日報) テーブル、および将来拡張用 (`offer_evaluations`, `location_notes`) テーブル定義。
+  - Supabaseで実行可能なSQLスクリプト。`delivery_logs` (日報・マルチ稼働 `platform` 対応) テーブル、および将来拡張用 (`offer_evaluations`, `location_notes`) テーブル定義。
 - 🧪 [specs/04_test_plan_and_cases.md](file:///c:/Users/81902/Desktop/%E3%82%A2%E3%83%97%E3%83%AA%E9%96%8B%E7%99%BA/delivery-efficiency/docs/specs/04_test_plan_and_cases.md)
   - 実装後の機能・計算精度・iPhone表示・オフライン動作を検証するためのテスト仕様書。
 
@@ -42,4 +42,5 @@
 - **画面 (PWA)**: React + Vite + Tailwind CSS + Lucide Icons + Recharts
 - **DB/バックエンド**: Supabase (PostgreSQL)
 - **地図**: Google Maps JavaScript API
+- **気象API**: Open-Meteo API (完全無料・登録不要)
 - **ホスティング**: Vercel
