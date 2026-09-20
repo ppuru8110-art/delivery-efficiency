@@ -8,7 +8,7 @@
 
 2. **iPhone PWA / モバイル操作性基準（配達現場向け絶対要件）**:
    - **フォーム自動ズーム防止**: iOS Safariのフォーカス時自動ズームを防ぐため、すべての input / select / textarea のフォントサイズは最小 16px（Tailwind: `text-base`）以上を必須とする。
-   - **画面高・バウンス・連打制御**: 全画面配置は `100dvh` を基準とし、意図しない引っ張りリロードを防ぐため `overscroll-behavior-y: none`、連打誤拡大を防ぐため操作要素に `touch-action: manipulation` を適用する。
+   - **画面高・バウンス・連打制御**: 全画面配置は `100dvh` を基準とし、最上位画面での意図しない引っ張りリロードを防ぐため `overscroll-behavior-y: none` を適用する（日報履歴等の内部スクロール領域の正常スクロールを阻害しない設計とする）。連打誤拡大防止のため操作要素には `touch-action: manipulation` を適用する。
    - **セーフエリア & タップ領域**: 下部ナビ・操作ボタンは `env(safe-area-inset-bottom)` を確保し、片手操作のため最小 44×44px のタップ領域を維持する。
    - **配達中スリープ防止 & チャンク保護**: 配達稼働中の画面消灯を防ぐScreen Wake Lock制御（非対応環境は安全に無視）、およびデプロイ時キャッシュ事故を防ぐChunkLoadError境界（自動再読込）を常設する。
    - **UI・デザイン統一**: アイコンは `lucide-react`、スタイルは Tailwind CSS を厳守し、無断の外部UIライブラリ追加を禁止する。

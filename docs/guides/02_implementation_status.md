@@ -41,7 +41,7 @@
 - [x] Vercelによる自動CI/CD本番デプロイ成功 (`Ready Latest`)
 
 ### 5. プロジェクト規約 ＆ 設計仕様（済）
-- [x] グローバル運用規約（GEMINI.md）との整合性確立 ＆ プロジェクト固有ルール（`.gemini/rules/project_docs.md`）の連動最適化完了（PS5.1互換・例外解釈封殺・100dvh・touch-action・バウンス防止・Wake Lock・ストレージ名前空間拡張性・upsert冪等性/Last-Write-Wins・本認証移行パス・管理者鍵排除・GPSタイムアウト/手動フォールバック・Vitest将来スコープ規定・0円運用・ドキュメント同期最適化）
+- [x] グローバル運用規約（GEMINI.md）との整合性確立 ＆ プロジェクト固有ルール（`.gemini/rules/project_docs.md`）の連動最適化完了（PS5.1互換・例外解釈封殺・100dvh・touch-action・バウンス防止/内部スクロール領域保護・Wake Lock・ストレージ名前空間拡張性・upsert冪等性/Last-Write-Wins・本認証移行パス・管理者鍵排除・GPSタイムアウト/手動フォールバック・Vitest将来スコープ規定・FinOpsマスタ取得スコープ適正化・0円運用・ドキュメント同期最適化）
 - [x] 詳細設計書（`docs/specs/`）の同期完了（16px自動ズーム防止、ErrorBoundary即死防止、device_id RLSデータ分離、堅牢性テストケース）
 
 ---
