@@ -9,7 +9,7 @@
 
 ## 1. 概要
 全プロジェクト共通「グローバル運用規約（GEMINI.md）」および「プロジェクト固有ルール（.gemini/rules/project_docs.md）」において資料間競合防止の恒久ガードレール（Single Source of Truth、仕様変更4大トリガー、ペア同期、管轄マップ明示）が確立され、技術資料群の正本完全化（実在ファイル追認、将来データモデル事前定義、.env.example実ファイル配置）が100%完了しています。
-資料群の確定仕様に基づき、新セッションではいよいよ**「フェーズ1 iPhone PWA 現場UI改修および堅牢性実装」**に着手します。
+「技術資料を絶対の正本（Ground Truth）とし、実コードを資料に完全追従させる」という合意方針に基づき、新セッションではコンテキストを100%リフレッシュした状態で、**「ステップ1: 外部サービス設定の確認ガイダンス提示」** および **「ステップ2: フェーズ1 iPhone PWA 現場UI改修（LogEntry.jsx / ErrorBoundary / storage.js）の実コード実装」** に着手します。
 
 ## 2. 直近コミット
 - コミット: 最新コミット `docs(specs): 技術資料の正本完全化および.env.exampleの配置 [skip ci]`
@@ -38,6 +38,13 @@
 - プロジェクト固有規約: `.gemini/rules/project_docs.md`
 - グローバル運用規約: `C:\Users\81902\.gemini\config\GEMINI.md`
 
-## 5. 次回タスク
-最優先で `git pull` を行い、ブランチ・docを確認後、**「1. `src/pages/LogEntry.jsx` の現場UI改修（入力欄16px化、業務日work_date、配送元platform選択、下書き即時退避＆クリア）」** の実装提案を提示してユーザーの承認を待ってください。
+## 5. 次回タスク（2段階実行フロー）
+最優先で `git pull` を行い、ブランチ・docを確認後、以下の2ステップで作業を進めてください：
+
+- **ステップ1（外部サービス設定の確認ガイダンス提示）**:
+  実コード改修に先立ち、技術資料変更に伴う以下の設定確認手順をユーザーへ簡潔に案内すること：
+  1. Supabaseのマイグレーション実行案内（`ALTER TABLE public.delivery_logs ADD COLUMN IF NOT EXISTS platform VARCHAR(20) DEFAULT 'other';`）
+  2. Google Cloud Console での APIキー「HTTPリファラー制限」（`localhost` & `*.vercel.app`）の設定確認
+- **ステップ2（実コードの修正着手）**:
+  上記ガイダンス提示・確認と並行して、技術資料に完全準拠した実コード改修の第1弾として、**`src/pages/LogEntry.jsx` の現場UI改修（入力欄16px化、業務日work_dateピッカー、配送元platform選択チップ、下書き即時退避＆クリア）**のピンポイント実装提案を提示してユーザーの承認を待つこと。
 ```
