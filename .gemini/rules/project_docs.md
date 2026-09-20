@@ -25,7 +25,7 @@
 4. **プライバシー & 認証境界（Supabase RLS & 環境変数保護）**:
    - **RLS分離 ＆ 認証移行性**: 匿名利用時は端末UUIDまたはSupabase匿名認証（Anonymous Auth）でRLS分離を必須化（`USING (true)` 全開放厳禁）。将来の本認証（メール/OAuth）導入時は `auth.uid()` への移行・統合を妨げない設計とする。
    - **配達先個人情報（PII）の非保持**: お客様の氏名・電話番号・詳細住所（部屋番号等）の個人情報はLocalStorageおよび同期DBへの永続化を厳禁とし、分析用数値（売上・件数・距離）と一般化攻略情報（店舗・エリア）に限定する（端末紛失時の情報漏洩完全防止）。
-   - **環境変数 ＆ オリジン保護**: Supabase管理者鍵（`service_role`）のフロント露出を厳禁とし、公開キー（`VITE_SUPABASE_ANON_KEY`, `VITE_GOOGLE_MAPS_API_KEY` 等）は `.env.example` を同期維持する。Google Mapsキーは本番（Vercel）およびローカルに限定したHTTPリファラー制限を必須とする。
+   - **環境変数 ＆ オリジン保護**: クライアント公開プレフィックス（`VITE_`）配下への管理者鍵（`service_role` 等）設定を厳禁とし、公開キー（`VITE_SUPABASE_ANON_KEY`, `VITE_GOOGLE_MAPS_API_KEY` 等）は `.env.example` を同期維持する。公開アクセスはSupabase RLS（行単位セキュリティ）およびGoogle MapsキーのHTTPリファラー制限（本番Vercelおよびローカル）で保護を必須とする。
 
 5. **完全0円 & 省リソース運用の徹底（通信・バッテリー・API保護）**:
    - **完全無料API優先**: 天気はクレカ不要の Open-Meteo を最優先。地図・住所検索の従量課金API利用時はローカルキャッシュおよび無料代替（国土地理院API・OpenStreetMap）へのフォールバック導線を常設する。
