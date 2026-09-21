@@ -44,7 +44,7 @@
 - **ステップ1（外部サービス設定の確認ガイダンス提示）**:
   実コード改修に先立ち、技術資料変更に伴う以下の設定確認手順をユーザーへ簡潔に案内すること：
   1. Supabaseのマイグレーション実行案内（`ALTER TABLE public.delivery_logs ADD COLUMN IF NOT EXISTS platform VARCHAR(20) DEFAULT 'other';`）
-  2. Google Cloud Console での APIキー「HTTPリファラー制限」（`localhost` & `*.vercel.app`）の設定確認
+  2. Google Cloud Console での APIキー「HTTPリファラー制限」（`localhost` & `*.vercel.app`）および「日次クォータ上限（Map Loads per day 500〜1,000件）」による課金事故完全封殺の設定確認
 - **ステップ2（実コードの修正着手）**:
   上記ガイダンス提示・確認と並行して、技術資料に完全準拠した実コード改修の第1弾として、**`src/pages/LogEntry.jsx` の現場UI改修（入力欄16px化、業務日work_dateピッカー、配送元platform選択チップ、下書き即時退避＆クリア）**のピンポイント実装提案を提示してユーザーの承認を待つこと。
 ```
